@@ -9,17 +9,17 @@ class TestAuthorizationEndpoint:
     @allure.description("Проверка кода ответа и id для успешной авторизации")
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Тест успешной авторизации курьера")
-    def test_successful_login(self, generate_random_login, create_and_delete_user):
-        login_response = ScooterApi.login_courier(TestDataHelper.generate_login_body(generate_random_login))
+    def test_successful_login(self, create_and_delete_user):
+        login_response = ScooterApi.login_courier(TestDataHelper.generate_login_body(TestDataHelper.generate_random_login()))
         assert login_response.status_code == 200 and 'id' in login_response.json()
 
     @allure.description("Проверка, что авторизация невозможна если передать только login")
     @allure.severity(allure.severity_level.MINOR)
     @allure.title("Тест авторизации без пароля")
-    def test_login_requires_only_login_bad_request(self, generate_random_login, create_and_delete_user):
-        login_response = ScooterApi.login_courier(TestDataHelper.generate_login_body(generate_random_login))
+    def test_login_requires_only_login_bad_request(self, create_and_delete_user):
+        login_response = ScooterApi.login_courier(TestDataHelper.generate_login_body(TestDataHelper.generate_random_login()))
         assert login_response.status_code == 200
-        login_body = TestDataHelper.generate_login_body(generate_random_login)
+        login_body = TestDataHelper.generate_login_body(TestDataHelper.generate_random_login())
         login_body.pop("login")
         incomplete_login_response = ScooterApi.login_courier(login_body)
         assert incomplete_login_response.status_code == 400
@@ -28,10 +28,10 @@ class TestAuthorizationEndpoint:
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Тест авторизации с неверными данными")
     @pytest.mark.parametrize("field", ["login", "password"])
-    def test_login_with_invalid_login_and_password(self, field, generate_random_login, create_and_delete_user):
-        login_response = ScooterApi.login_courier(TestDataHelper.generate_login_body(generate_random_login))
+    def test_login_with_invalid_login_and_password(self, field, create_and_delete_user):
+        login_response = ScooterApi.login_courier(TestDataHelper.generate_login_body(TestDataHelper.generate_random_login()))
         assert login_response.status_code == 200
-        login_body = TestDataHelper.generate_login_body(generate_random_login)
+        login_body = TestDataHelper.generate_login_body(TestDataHelper.generate_random_login())
         login_body[field] = "new_value"
         incomplete_login_response = ScooterApi.login_courier(login_body)
 

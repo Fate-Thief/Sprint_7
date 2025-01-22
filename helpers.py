@@ -1,3 +1,6 @@
+import random
+import string
+
 import allure
 
 from data import TestAuthorizationData
@@ -17,3 +20,9 @@ class TestDataHelper:
         body = TestAuthorizationData.LOGIN_COURIER_BODY.copy()
         body['login'] = random_login
         return body
+
+    @staticmethod
+    @allure.step("Генерация случайного логина")
+    def generate_random_login():
+        letters = string.ascii_lowercase
+        return ''.join(random.choice(letters) for _ in range(8))
