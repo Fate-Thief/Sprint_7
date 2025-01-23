@@ -10,14 +10,20 @@ class TestAuthorizationEndpoint:
     @allure.severity(allure.severity_level.CRITICAL)
     @allure.title("Тест успешной авторизации курьера")
     def test_successful_login(self, create_and_delete_user):
-        login_response = ScooterApi.login_courier(TestDataHelper.generate_login_body(TestDataHelper.generate_random_login()))
+        random_login = TestDataHelper.generate_random_login()
+        create_and_delete_user(random_login)
+        login_response = ScooterApi.login_courier(
+            TestDataHelper.generate_login_body(random_login))
         assert login_response.status_code == 200 and 'id' in login_response.json()
 
     @allure.description("Проверка, что авторизация невозможна если передать только login")
     @allure.severity(allure.severity_level.MINOR)
     @allure.title("Тест авторизации без пароля")
     def test_login_requires_only_login_bad_request(self, create_and_delete_user):
-        login_response = ScooterApi.login_courier(TestDataHelper.generate_login_body(TestDataHelper.generate_random_login()))
+        random_login = TestDataHelper.generate_random_login()
+        create_and_delete_user(random_login)
+        login_response = ScooterApi.login_courier(
+            TestDataHelper.generate_login_body(random_login))
         assert login_response.status_code == 200
         login_body = TestDataHelper.generate_login_body(TestDataHelper.generate_random_login())
         login_body.pop("login")
@@ -29,7 +35,10 @@ class TestAuthorizationEndpoint:
     @allure.title("Тест авторизации с неверными данными")
     @pytest.mark.parametrize("field", ["login", "password"])
     def test_login_with_invalid_login_and_password(self, field, create_and_delete_user):
-        login_response = ScooterApi.login_courier(TestDataHelper.generate_login_body(TestDataHelper.generate_random_login()))
+        random_login = TestDataHelper.generate_random_login()
+        create_and_delete_user(random_login)
+        login_response = ScooterApi.login_courier(
+            TestDataHelper.generate_login_body(random_login))
         assert login_response.status_code == 200
         login_body = TestDataHelper.generate_login_body(TestDataHelper.generate_random_login())
         login_body[field] = "new_value"
@@ -41,6 +50,8 @@ class TestAuthorizationEndpoint:
     @allure.severity(allure.severity_level.NORMAL)
     @allure.title("Тест авторизации несуществующего пользователя")
     def test_login_with_nonexistent_user(self, create_and_delete_user):
+        random_login = TestDataHelper.generate_random_login()
+        create_and_delete_user(random_login)
         nonexistent_user_body = {
             "login": "nonexistent_user_login",
             "password": "nonexistent_user_password"
